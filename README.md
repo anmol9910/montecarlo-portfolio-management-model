@@ -1,7 +1,7 @@
 # Portfolio Management with Monte Carlo Simulation
 
 [![Python Version](https://img.shields.io/badge/python-3.7%2B-blue)](https://www.python.org/downloads/)
-[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
 
 ---
 
@@ -21,7 +21,6 @@
     - [Application Workflow](#application-workflow)
   - [Testing](#testing)
   - [Contributing](#contributing)
-  - [License](#license)
   - [Contact](#contact)
 
 ---
