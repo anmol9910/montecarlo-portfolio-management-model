@@ -266,22 +266,3 @@ Contributions are highly appreciated! Please follow these guidelines:
 
 ---
 
-## License
-
-This project is licensed under the terms of the [MIT License](LICENSE).
-
----
-
-## Contact
-
-- **Author**: Your Name
-- **Email**: [cristianleo120@gmail.com](mailto:cristianleo120@gmail.com)
-- **GitHub**: [cristianleoo](https://github.com/cristianleoo)
-- **LinkedIn**: [cristian-leo](https://www.linkedin.com/in/cristian-leo/)
-- **Medium**: [cristianleo120](https://medium.com/@cristianleo120)
-
-Feel free to reach out for any inquiries or collaboration opportunities.
-
----
-
-*Disclaimer: This application is intended for educational purposes only. Investment involves risk, and past performance is not indicative of future results. Consult with a qualified financial advisor before making investment decisions.*

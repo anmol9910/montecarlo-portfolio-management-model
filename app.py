@@ -2,6 +2,8 @@ import streamlit as st
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import pandas as pd
+import urllib.request
+
 from portfolio_management.data.data_loader import DataLoader
 from portfolio_management.portfolio.portfolio import Portfolio
 from portfolio_management.portfolio.optimizer import PortfolioOptimizer
@@ -11,6 +13,8 @@ from portfolio_management.utils.helpers import (
     get_simulation_insights,
     display_optimal_weights
 )
+from config import TICKERS  # fallback tickers
+
 
 def main():
     st.title('Portfolio Management with Monte Carlo Simulation')
@@ -22,10 +26,23 @@ def main():
     # Load list of tickers for autocomplete suggestions
     @st.cache_data
     def load_ticker_list():
-        sp500_url = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
-        tables = pd.read_html(sp500_url)
-        sp500_tickers = tables[0]['Symbol'].tolist()
-        return sp500_tickers
+        sp500_url = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
+        headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+        req = urllib.request.Request(sp500_url, headers=headers)
+
+        try:
+            # Read raw HTML with headers
+            with urllib.request.urlopen(req) as response:
+                html = response.read()
+
+            # Parse tables from HTML
+            tables = pd.read_html(html)
+            sp500_tickers = tables[0]["Symbol"].tolist()
+            return sp500_tickers
+
+        except Exception as e:
+            st.warning(f"⚠️ Could not fetch tickers from Wikipedia. Using fallback list. Error: {e}")
+            return TICKERS
 
     ticker_list = load_ticker_list()
 
@@ -44,9 +61,17 @@ def main():
 
     col1, col2 = st.columns(2)
     with col1:
-        start_date = st.date_input('Start Date', value=pd.to_datetime('2020-01-01'), help='The start date for historical data.')
+        start_date = st.date_input(
+            'Start Date',
+            value=pd.to_datetime('2020-01-01'),
+            help='The start date for historical data.'
+        )
     with col2:
-        end_date = st.date_input('End Date', value=pd.to_datetime(datetime.today() - relativedelta(days=1)), help='The end date for historical data.')
+        end_date = st.date_input(
+            'End Date',
+            value=pd.to_datetime(datetime.today() - relativedelta(days=1)),
+            help='The end date for historical data.'
+        )
 
     tickers = selected_tickers
 
@@ -74,7 +99,11 @@ def main():
         st.write('Input weights for each stock or choose to optimize the portfolio.')
 
         # Optimization Options
-        optimize = st.checkbox('Optimize Portfolio', value=False, help='Select to automatically calculate optimal weights for your portfolio.')
+        optimize = st.checkbox(
+            'Optimize Portfolio',
+            value=False,
+            help='Select to automatically calculate optimal weights for your portfolio.'
+        )
         if optimize:
             optimization_choice = st.selectbox(
                 'Optimization Strategy',
@@ -159,7 +188,11 @@ def main():
     if run_simulation:
         # Load data
         data_loader = DataLoader()
-        stock_data = data_loader.load_data(tickers, start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d'))
+        stock_data = data_loader.load_data(
+            tickers,
+            start_date.strftime('%Y-%m-%d'),
+            end_date.strftime('%Y-%m-%d')
+        )
 
         if stock_data.empty:
             st.error('Failed to load stock data. Please check the tickers and date range.')
@@ -213,6 +246,7 @@ def main():
         # Plot results
         st.subheader('Interactive Plots')
         plot_interactive_simulation_results(all_cumulative_returns, final_portfolio_values, end_date)
+
 
 if __name__ == '__main__':
     main()
